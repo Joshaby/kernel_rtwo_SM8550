@@ -1,17 +1,20 @@
-name: setup-env
-description: install deps, record timestamps, copy apply_patch helper
+name: setup-ksu
+description: integrate KSU variant + SUSFS into kernel source
+
+inputs:
+  ksu_type:
+    required: true
+  kernel_dir:
+    required: true
+  work_dir:
+    required: true
 
 runs:
   using: composite
   steps:
     - shell: bash
-      run: |
-        echo "BUILD_TIME=$(date +'%Y-%m-%d %H:%M')" >> $GITHUB_ENV
-        echo "BUILD_DATE=$(date +'%Y%m%d')"          >> $GITHUB_ENV
-        sudo apt-get update -qq
-        sudo apt-get install -y --no-install-recommends \
-          aria2 bc bison build-essential flex \
-          git libelf-dev libssl-dev curl jq \
-          gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi \
-          dwarves
-        cp ${{ github.workspace }}/scripts/apply_patch.sh /tmp/apply_patch.sh
+      env:
+        KSU_TYPE:   ${{ inputs.ksu_type }}
+        KERNEL_DIR: ${{ inputs.kernel_dir }}
+        WORK_DIR:   ${{ inputs.work_dir }}
+      run: bash ${{ github.workspace }}/scripts/setup-ksu.sh
