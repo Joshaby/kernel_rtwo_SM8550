@@ -46,21 +46,24 @@ jobs:
             ksu:       "ksun"
             prefix:    "Moto_Ksun"
             artifact:  "moto-ksun"
-            defconfig: "vendor/rtwo_defconfig"
+            defconfig: "gki_defconfig"
+            clo_fragment: "vendor/kalama_GKI.config"
 
           - name:      "Moto-SukiSU"
             source:    "moto"
             ksu:       "suki"
             prefix:    "Moto_SukiSU"
             artifact:  "moto-suki"
-            defconfig: "vendor/rtwo_defconfig"
+            defconfig: "gki_defconfig"
+            clo_fragment: "vendor/kalama_GKI.config"
 
           - name:      "Moto-NoKSU"
             source:    "moto"
             ksu:       "none"
             prefix:    "Moto_NoKSU"
             artifact:  "moto-noksu"
-            defconfig: "vendor/rtwo_defconfig"
+            defconfig: "gki_defconfig"
+            clo_fragment: "vendor/kalama_GKI.config"
 
     uses: ./.github/workflows/build-kernel.yml
     with:
@@ -70,6 +73,7 @@ jobs:
       zip_prefix:    ${{ matrix.variant.prefix }}
       artifact_name: ${{ matrix.variant.artifact }}
       defconfig:     ${{ matrix.variant.defconfig }}
+      clo_fragment:  ${{ matrix.variant.clo_fragment || '' }}
       build_type:    ${{ inputs.build_type || 'stable' }}
     secrets: inherit
 
