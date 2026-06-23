@@ -55,6 +55,20 @@ echo "[${SOURCE_TYPE^^}] Switching to ThinLTO..."
   --enable  LTO_CLANG_THIN
 make "${MAKE_FLAGS[@]}" olddefconfig
 
+if [ -n "${CLO_FRAGMENT:-}" ] && [ -f "arch/arm64/configs/${CLO_FRAGMENT}" ]; then
+  echo "[${SOURCE_TYPE^^}] Merging fragment: $CLO_FRAGMENT"
+  KCONFIG_CONFIG="${OUT_DIR}/dist/.config" \
+    scripts/kconfig/merge_config.sh -m \
+    "${OUT_DIR}/dist/.config" \
+    "arch/arm64/configs/${CLO_FRAGMENT}"
+  make "${MAKE_FLAGS[@]}" olddefconfig
+  ./scripts/config --file "${OUT_DIR}/dist/.config" \
+    -d ZRAM_DEF_COMP_LZORLE -d ZRAM_DEF_COMP_ZSTD \
+    -e ZRAM_DEF_COMP_LZ4    -d ZRAM_DEF_COMP_LZO \
+    --set-str ZRAM_DEF_COMP "lz4"
+  make "${MAKE_FLAGS[@]}" olddefconfig
+fi
+
 echo "[${SOURCE_TYPE^^}] Building Image..."
 if ! make "${MAKE_FLAGS[@]}" Image 2>&1 | tee "$LOG"; then
   echo "[FAIL] ${SOURCE_TYPE^^} build failed:"
