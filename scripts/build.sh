@@ -46,7 +46,10 @@ cd "$KERNEL_SRC"
 
 LOG="/tmp/build_${SOURCE_TYPE}.log"
 
-make "${MAKE_FLAGS[@]}" gki_defconfig kalama_GKI.config moto-kalama.config moto-kalama-gki.config
+make "${MAKE_FLAGS[@]}" gki_defconfig \
+    vendor/kalama_GKI.config \
+    vendor/ext_config/moto-kalama.config \
+    vendor/ext_config/moto-kalama-gki.config
 
 echo "[${SOURCE_TYPE^^}] Switching to ThinLTO..."
 ./scripts/config --file "${OUT_DIR}/dist/.config" \
